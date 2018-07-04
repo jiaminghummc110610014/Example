@@ -8,3 +8,4 @@
     學校
     1.Github創建帳號
     2.基本資料
+    [hw1]: (https://jiaminghummc110610014.github.io/Example/week1.html)
