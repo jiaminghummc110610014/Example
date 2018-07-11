@@ -1,0 +1,39 @@
+---
+title: "Data Visualization(資料視覺化)"
+author: "ming"
+date: "2018年7月11日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+Orange
+```
+單變數：類別型
+
+```{r}
+ggplot(data = Orange, aes(x = Tree)) +
+geom_bar(fill = "lightblue", colour = "black")
+```
+單變數：連續型
+
+```{r}
+ggplot(data = Orange, aes(x =circumference )) +
+  geom_histogram()
+```
+
+雙變數：連續 vs 連續
+
+```{r} 
+ggplot(data = Orange, aes(x = age, y=circumference)) +
+  geom_point()
+```
+
+
+雙變數：離散 vs 連續、多變量
+上面兩種由於資料的變項關係，故圖片無法取得!
+

@@ -11,3 +11,6 @@
     2.基本資料
 
 [hw1](https://jiaminghummc110610014.github.io/Example/week1/hw1.html)
+## Week2
+1.資料視覺化
+[hw1](https://jiaminghummc110610014.github.io/Example/week2/hw_1.html)
