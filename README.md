@@ -14,3 +14,4 @@
 ## Week2
 1.資料視覺化
 [hw1](https://jiaminghummc110610014.github.io/Example/week2/hw_1.html)
+[hw2](https://jiaminghummc110610014.github.io/Example/week2/hw_2.html)
