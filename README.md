@@ -18,4 +18,4 @@
 
 ##Week3
 1.EDA
-[EDA](https://jiaminghummc110610014.github.io/Example/week3/EDA.html)
+[EDA](https://jiaminghummc110610014.github.io/Example/week3/EDA_renew.html)
