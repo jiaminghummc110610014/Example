@@ -1,0 +1,172 @@
+---
+title: "jobskill的EDA(探索資料分析)"
+author: "ming"
+date: "2018年7月18日"
+output: html_document
+---
+#Data from:https://www.kaggle.com/niyamatalmass/google-job-skills
+
+```{r}
+Testdata=read.csv("./job_skills.csv", quote = "", 
+                 row.names = NULL, 
+                 stringsAsFactors = FALSE)
+str(Testdata)
+```
+
+```{r, include=FALSE, echo = FALSE}
+library(data.table)
+library(ggplot2)
+library(sqldf)
+library(rworldmap)
+library(ggmap)
+library(mapproj)
+library(ggplot2)
+library(maptools)
+library(maps)
+library(wordcloud)
+# library(qdap)
+library(tm)
+library(stringr)
+library(SnowballC)   
+library(Tmisc)
+library(scales)
+# =================================================================== #
+# Defining all custom functions at the beginning.
+# =================================================================== #
+# function to aggregate text specific to a single publisher/ media house.
+create_text<- function( datadf )
+{
+    print(nrow(datadf))
+    # creating empty array
+    textarrdf = c(" ")
+    
+    for(i in 1:nrow(datadf))
+    { 
+        temp_arr1 = datadf[i, "Responsibilities"]
+        temp_arr2 = datadf[i, "Min_qual"]
+        temp_arr3 = datadf[i, "Pref_qual"]
+        
+        textarrdf = paste(textarrdf, temp_arr1, temp_arr2, temp_arr3, sep = " ")
+        
+    }
+    
+    return(textarrdf)
+} 
+
+# function to copy to clipboard:
+copyfn <- function(z) write.table(z, "clipboard" , sep = "\t", row.names = F)
+
+```
+
+```{r}
+# Read input file:
+google_skills <- data.frame(fread("./job_skills.csv"))
+
+colnames(google_skills) <- c("Company", "Title", "Category", "Location", "Responsibilities", "Min_qual",
+                             "Pref_qual")
+str(google_skills)
+```
+
+```{r}
+table(google_skills$Category)
+```
+
+```{r}
+google_skills$job_fte <- ifelse( (grepl("Intern ", google_skills$Title)) == TRUE, "Internships",
+                            ifelse( (grepl("Intern,", google_skills$Title)) == TRUE, "Internships", "Full-time"))
+
+
+mytable <- table(google_skills$job_fte)
+lbls <- paste(names(mytable), "\n", mytable, sep="")
+pie(mytable, labels = lbls, 
+    main="Pie Chart of Full-time versus part-time")
+```
+
+```{r}
+google_skills$cloud_flag <- ifelse( grepl("Google Cloud", google_skills$Title)==TRUE, "cloud",
+                              ifelse( grepl( "Google Cloud", google_skills$Pref_qual) == TRUE, "cloud",   
+                              ifelse( grepl( "Google Cloud", google_skills$Responsibilities) == TRUE, "cloud",  
+                                    "regular"  )))
+table(google_skills$cloud_flag)
+ggplot(google_skills) + geom_bar(aes(x = cloud_flag))
+```
+
+```{r}
+google_skills$min_degree <- ifelse( grepl("Bachelor", google_skills$Min_qual) == TRUE, "Bachelor",
+                           ifelse( grepl("BA/BS", google_skills$Min_qual)==TRUE, "Bachelor",
+                           ifelse( grepl("Master", google_skills$Min_qual)==TRUE, "Master",
+                           ifelse( grepl("PhD", google_skills$Min_qual)== TRUE, "PhD", "other"))))
+
+ggplot(google_skills, aes(min_degree)) + 
+    geom_bar(aes(y = (..count..)/sum(..count..)), fill = "blue") + 
+    scale_y_continuous(labels=scales::percent) +
+    ylab("relative frequencies")
+```
+
+```{r}
+google_skills$pref_degree <- ifelse( grepl("PhD", google_skills$Pref_qual) == TRUE, "PhD",
+                          ifelse( grepl("Master", google_skills$Pref_qual)==TRUE, "Master",
+                          ifelse( grepl("MBA", google_skills$Pref_qual)==TRUE, "Master",
+                          ifelse( grepl("MS", google_skills$Pref_qual)== TRUE, "Master", "Bachelor"))))
+
+ggplot(google_skills, aes(pref_degree)) + 
+    geom_bar(aes(y = (..count..)/sum(..count..)), fill = "blue") + 
+    scale_y_continuous(labels=scales::percent) +
+    ylab("relative frequencies")
+```
+
+```{r}
+google_skills$tech_flag <- ifelse( grepl("Engineering", google_skills$Min_qual) == TRUE, "tech",
+                             ifelse( grepl("technical", google_skills$Min_qual) == TRUE, "tech",
+                             ifelse( grepl("Engineering", google_skills$Pref_qual) == TRUE, "tech",
+                             ifelse( grepl("technical", google_skills$Pref_qual)==TRUE, "tech", "other"))))
+
+ggplot(google_skills, aes(tech_flag)) + 
+    geom_bar(aes(y = (..count..)/sum(..count..))) + 
+    scale_y_continuous(labels=scales::percent) +
+    ylab("relative frequencies")
+```
+
+```{r}
+# Create text_document for all jobs related to Google Cloud
+text_dict_source <- subset(google_skills, cloud_flag == "cloud")
+# text_dict_source <- subset(google_skills, exp_data >= 12 )
+# text_dict_source <- subset(google_skills, Category == "Hardware Engineering")
+row.names(text_dict_source) <- NULL
+
+
+text_sourcedf <- create_text( text_dict_source)
+
+
+
+# Clean up the text:
+# remove non-ascii characters, if any:
+text_sourcedf2 <- iconv(text_sourcedf, "latin1", "ASCII", sub="")
+
+# convert all text to lowercase:
+text_sourcedf2 = tolower(text_sourcedf2)
+
+
+# create word corpus and perform cleaning and pre-processing
+wordCorpus <- Corpus(VectorSource(text_sourcedf2))
+summary(wordCorpus)
+
+# processing and clean the text
+wordCorpus <- tm_map(wordCorpus, removePunctuation)
+wordCorpus <- tm_map(wordCorpus, removeNumbers)
+wordCorpus <- tm_map(wordCorpus, content_transformer(tolower))
+wordCorpus <- tm_map(wordCorpus, removeWords, stopwords("english"))
+wordCorpus <- tm_map(wordCorpus, stripWhitespace)
+wordCorpus <- tm_map(wordCorpus, stemDocument) 
+
+
+
+# create word clouds 
+wordCorpus1 <- tm_map(wordCorpus, stemDocument)
+# code to create a word cloud:
+```
+
+```{r}
+wordcloud(wordCorpus1, scale=c(5,0.5), max.words=100, random.order=FALSE, 
+          rot.per=0.35, use.r.layout=FALSE, colors = brewer.pal(8, "Dark2"))
+```
