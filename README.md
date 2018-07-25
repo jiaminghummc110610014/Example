@@ -7,16 +7,22 @@
   
 ## Week1
 學校
+
     1.Github創建帳號
+
     2.基本資料
 
 [hw1](https://jiaminghummc110610014.github.io/Example/week1/hw1.html)
 ## Week2
     1.資料視覺化
 [hw1](https://jiaminghummc110610014.github.io/Example/week2/hw_1.html)
+
 [hw2](https://jiaminghummc110610014.github.io/Example/week2/hw_2.html)
 
 ## Week3
     1.EDA
 [EDA](https://jiaminghummc110610014.github.io/Example/week3/EDA_renew.html)
+
 [TFIDF](https://jiaminghummc110610014.github.io/Example/week3/TFIDF.html)
+
+[TFIDF+PCA+K_means](https://jiaminghummc110610014.github.io/Example/week3/TFIDF+PCA+K_means.html)
