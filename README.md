@@ -17,12 +17,14 @@
     1.資料視覺化
 [hw1](https://jiaminghummc110610014.github.io/Example/week2/hw_1.html)
 
+    2.文字雲
 [hw2](https://jiaminghummc110610014.github.io/Example/week2/hw_2.html)
 
 ## Week3
     1.EDA
 [EDA](https://jiaminghummc110610014.github.io/Example/week3/EDA_renew.html)
 
+    2.TFIDF
 [TFIDF](https://jiaminghummc110610014.github.io/Example/week3/TFIDF.html)
 
 [TFIDF+PCA+K_means](https://jiaminghummc110610014.github.io/Example/week3/TFIDF+PCA+K_means.html)
