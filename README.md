@@ -33,3 +33,7 @@
     1.更深入的EDA
     2.Regression
 [Regression](https://jiaminghummc110610014.github.io/Example/week4/regression.html)
+
+## Week5
+    1.Shiny的基本呈現方式
+[Shiny的基本呈現方式](https://http://127.0.0.1:3943/)
