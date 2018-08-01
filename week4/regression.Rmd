@@ -1,0 +1,126 @@
+---
+title: "regression"
+author: "ming"
+date: "2018年8月1日"
+output: html_document
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+data <- read.table(file = "TIMSS2011TW.txt", 
+                  header = TRUE,encoding = "UTF-8")
+```
+
+```{r}
+str(data)
+head(data)
+summary(data)
+```
+
+```{r}
+require(ggplot2)
+old <- theme_set(theme_bw())
+```
+
+```{r cache=TRUE,warning=FALSE}
+ggplot(data = data, aes(x = gender, y =science)) +
+ geom_boxplot() + coord_flip() +
+ labs( y = '科學', x = '性別', 
+       title = 'Math Box')
+```
+
+```{r cache=TRUE,warning=FALSE}
+with(data, 
+     tapply(science, gender,
+     function(x) 
+       c(mean(x) + c(-2, 2) * sd(x)/sqrt(length(x)))))
+```
+
+```{r}
+t.test(science ~ gender, data = data)
+```
+
+```{r}
+data$science.hours <- factor(data$science.hours, 
+                       levels = c('<= 45min',
+                                  '45min - 3hours', '>= 3hours'))
+```
+
+```{r}
+tapply(data$science.interest, data$science.hours, mean)
+```
+
+```{r}
+library(Hmisc)
+ggplot(data = data, 
+       aes(x =science.hours, y = science.interest)) +
+  stat_summary(fun.data = 'mean_cl_boot', size = 1) +
+  scale_y_continuous(breaks = seq(5, 15, by = 1)) +
+  geom_hline(yintercept = mean(data$science.interest) , 
+             linetype = 'dotted') +
+  labs(x = '科學投入時間', y = '對科學的興趣程度') +
+  coord_flip()
+```
+
+```{r}
+anova(m1 <- lm(science.interest~ parental.education, data = data))
+ggplot(data = data, 
+       aes(group = science.hours, 
+          y = science.interest, x = educational.resources)) +
+  geom_point() +
+  stat_smooth(method = 'lm', se = F) +
+  stat_smooth(aes(group = science.hours, 
+          y = science.interest, x = educational.resources), 
+          method = 'lm', se = F) + 
+  facet_grid( . ~  science.hours) +
+  labs(x = '教育資源', y = '對自然的興趣程度')
+```
+
+```{r}
+anova(m2 <- update(m1, . ~ . + 
+            educational.resources, data = data))
+#或許不是對自然的投入時間而是教育資源造成
+anova(m3 <- update(m2, . ~ . - science.hours,  data = data))
+```
+
+```{r}
+res_lm <- lapply(list(m1, m2, m3), summary)
+
+(res_lm[[2]]$r.sq - res_lm[[3]]$r.sq)/res_lm[[2]]$r.sq
+anova(m3, m2)
+(res_lm[[2]]$r.sq - res_lm[[1]]$r.sq)/res_lm[[1]]$r.sq
+anova(m1, m2)
+```
+
+
+```{r}
+fit_m2 <- data.frame(data[, c(11, 8, 13)], fitted = fitted(m2), resid = resid(m2),
+                     infl = influence(m2)$hat )
+ggplot(data = fit_m2, aes(x = science.interest, group = science.hours )) +
+ stat_density(geom = 'path', position = 'identity') +
+ stat_density(geom = 'path', position = 'identity', aes(x = fitted)) +
+ geom_vline(xintercept = c(with(data, tapply(science.interest,science.hours, mean))), linetype = 'dotted')+
+ facet_grid(science.hours ~ .) +
+ scale_x_continuous(breaks = seq(5, 15, by = 1))+
+ labs(x = '對科學的興趣程度', y = '機率密度')
+```
+
+```{r}
+require(lattice)
+qqmath(~ scale(resid) | science.hours, data = fit_m2, type = c('p', 'g', 'r'),
+       xlab = '常態位數', ylab = '標準化殘差', layout = c(2, 3),
+       pch = '.', cex = 2)
+```
+
+```{r}
+library(ggplot2)
+require(MASS)
+ggplot(data = fit_m2, aes(x = fitted, y = scale(resid), group = science.hours )) +
+  geom_point(pch = 20, size = 1) +
+  stat_smooth(method = 'rlm', se = F) +
+  facet_grid(science.hours ~ .) +
+  labs(x = '預測值', y = '標準化殘差')
+```

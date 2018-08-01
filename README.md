@@ -30,3 +30,6 @@
 [TFIDF+PCA+K_means](https://jiaminghummc110610014.github.io/Example/week3/TFIDF+PCA+K_means.html)
 
 ## Week4
+    1.更深入的EDA
+    2.Regression
+[Regression](https://jiaminghummc110610014.github.io/Example/week4/regression.html)
