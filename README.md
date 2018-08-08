@@ -37,3 +37,7 @@
 ## Week5
     1.Shiny的基本呈現方式
 [Shiny的基本呈現方式](https://http://127.0.0.1:3943/)
+
+## Week6
+    1.期末報告->2017spotify熱門音樂分析
+[期末報告](https://abcxzew.shinyapps.io/final/)
