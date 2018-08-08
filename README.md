@@ -42,4 +42,4 @@
     1.期末報告->2017spotify熱門音樂分析
 [期末報告](https://abcxzew.shinyapps.io/final/)
 
-[PPT](https://docs.google.com/presentation/d/17CzWLTnE-lR538IDUP0zPEdpO8PiOMVOO3hv664qrA0/edit#slide=id.p1)
+[PPT](https://docs.google.com/presentation/d/17CzWLTnE-lR538IDUP0zPEdpO8PiOMVOO3hv664qrA0/edit?usp=sharing)
